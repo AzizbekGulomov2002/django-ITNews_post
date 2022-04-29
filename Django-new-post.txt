@@ -1,0 +1,313 @@
+1) django-admin startproject project .
+
+
+
+gitignore hosil qilish (git ignore bu - loyihadagi ayrim keraksiz kutubxonalarni ignor qilish va keraklisini olib qolish uchun)
+
+ushbu saytdan olish ->  (https://github.com/jpadilla/django-project-template/blob/master/.gitignore)
+
+5) projectda .gitignore fayl ochib kodni tashlash va db sqlite va build ni o`chirish
+
+--------------------------------------------------------------------------------------------------------------------
+
+2) py manage.py startapp app
+
+(sumkacha hosil qilish uchun)
+
+python -m venv env
+
+Cd env/Scripts
+activate
+cd .. (2x)
+
+
+pip install django
+
+
+--------------------------------------------------------------------------------------------------------------------
+
+
+3) settings.py + app + 
+
+STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR,'static')
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+--------------------------------------------------------------------------------------------------------------------
+
+
+4) project / urls.py
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+
+
+admin.site_title='Dasturlash haqida Yangiliklar sayti'
+admin.site_header=""
+
+urlpatterns+=static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+
+--------------------------------------------------------------------------------------------------------------------
+
+
+5) app + urls.py:
+
+
+
+from django.urls import path
+from .views import *
+
+urlpatterns = [
+    path('' "),
+   
+    ]
+
+
+
+urlpatterns+=static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+
+
+
+--------------------------------------------------------------------------------------------------------------------
+
+
+6) app + templates + blog
+
+templates + base.html:
+
+bootstrap5 link + navbar
+
+
+--------------------------------------------------------------------------------------------------------------------
+
+7) models.py:
+
+
+from distutils.command.upload import upload
+from pyexpat import model
+from django.db import models
+
+# Create your models here.
+
+class Post(models.Model):
+    sarlavha = models.CharField(max_length=100)
+    malumot = models.TextField()
+    rasm = models.ImageField(upload_to='post_image', null=True, blank=True)
+    video = models.FileField(upload_to='post_video', null=True, blank=True)
+    kurishlar = models.IntegerField(default=1)
+    vaqt = models.DateTimeField(auto_now_add=True)
+
+
+    def __str__(self):
+        return self.sarlavha
+    
+---------------------------------------------------------------
+   
+Admin.py:
+
+
+from .models import Post
+admin.site.register(Post)
+    
+
+---------------------------------------------------------------
+
+8) views.py:
+
+def main(request):
+    
+    post = Post.objects.all()
+    return render(request,'blog/basic.html',{"posts":post})
+
+
+
+--------------------------------------------------------------------------------------------------------------------
+
+
+
+9) base.html(nav footer turadigan):
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+{% extends 'base.html' %}
+{% block title %}
+Asosiy sahifa | {{block.super}}
+{% endblock title %}
+{% block content %}
+<div class="row sm-3">
+    {% for post in posts %}
+    <div class="col-sm-3 mt-5">
+        <div class="card">
+            <img style="height: 250px;" src="{{post.rasm.url}}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">{{post.sarlavha}}</h5>
+                <h5 class="card-title">{{post.malumot}}</h5>
+                <p class="card-text"><i class="fa fa-eye" style="font-size:20px"><span style="font-size: 18px;">ko`rilgan: </span>{{post.kurishlar}}</i></p>
+                <p class="card-text"><i class="fa fa-clock-o" aria-hidden="true">{{post.vaqt}}</i></p>
+                <a style="width: 100%;" href="/{{post.id}}" class="btn btn-primary ">Batafsil</a>
+            </div>
+        </div>
+    </div>
+
+
+
+    {% endfor %}
+    {% endblock content %}
+
+--------------------------------------------------------------------------------------------------------------------
+
+
+10)  basic.html(asosiy.html):
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+{% extends 'base.html' %}
+{% block title %}
+Asosiy sahifa | {{block.super}}
+{% endblock title %}
+{% block content %}
+<div class="row sm-3">
+    {% for post in posts %}
+    <div class="col-sm-3 mt-5">
+        <div class="card">
+            <img style="height: 250px;" src="{{post.rasm.url}}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">{{post.sarlavha}}</h5>
+                <h5 class="card-title">{{post.malumot}}</h5>
+                <p class="card-text"><i class="fa fa-eye" style="font-size:20px"><span style="font-size: 18px;">ko`rilgan: </span>{{post.kurishlar}}</i></p>
+                <p class="card-text"><i class="fa fa-clock-o" aria-hidden="true">{{post.vaqt}}</i></p>
+                <a style="width: 100%;" href="/{{post.id}}" class="btn btn-primary ">Batafsil</a>
+            </div>
+        </div>
+    </div>
+
+
+
+    {% endfor %}
+    {% endblock content %}
+
+--------------------------------------------------------------------------------------------------------------------
+
+
+11) blog + post_detail:
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+{% extends 'base.html' %}
+{% block title %}
+Post ma`lumotlari | {{block.super}}
+{% endblock title %}
+{% block content %}
+
+
+<center>
+   
+    <div class="col-sm-6 mt-5">
+        <div class="card">
+            <img style="height: 300px;width:100%" src="{{posts.rasm.url}}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">{{posts.sarlavha}}</h5>
+                <h5 class="card-title">{{posts.malumot}}</h5>
+                <p class="card-text"><i class="fa fa-eye" style="font-size:20px">{{posts.kurishlar}}</i></p>
+                <p class="card-text"><i class="fa fa-clock-o" aria-hidden="true">{{posts.vaqt}}</i></p>
+                <a style="width: 100%;" href="/" class="btn btn-primary">Asosiy</a>
+            </div>
+        </div>
+    </div>
+</center>
+
+
+    {% endblock content %}
+
+
+--------------------------------------------------------------------------------------------------
+
+
+12) urls.py:
+
+path{
+
+path('<int:id>',post_detail),
+
+}
+
+-------------------------------------------------------------------------------------------------------------
+
+
+
+13) views.py:
+
+
+def post_detail(request,id):    
+    posts=Post.objects.get(id=id)
+    return render(request,'blog/post_detail.html',{"posts":posts})
+
+
+
+-------------------------------------------------------------------------------------------------------------
+
+
+14) KO'RISHLAR SONINI HOSIL QILISH :
+
+
+a) views.py:
+
+posts.kurishlar=posts.kurishlar+1
+    posts.save()
+
+b) urls.py:
+
+path('<int:id>',post_detail),
+
+
+c) main.html(basic.html):
+ Post haqida batafsil tugmasi -> href=/{{post.id}}
+
+
+-------------------------------------------------------------------------------------------------------------
+
+
+15) SAYTNING TITLE SARLAVHA QISMINI O`ZGARTIRISH:
+
+project/urls.py:
+
+admin.site_title='Dasturlash haqida Yangiliklar sayti'
+admin.site_header=""
+
+
+-------------------------------------------------------------------------------------------------------------
+
+16) SEARCH(QIDIRUV FUNKSIYASI)
+
+base.html:
+
+inputga name='qidiruv'
+formga method='POST'
+
+formdan keyingi qatorda CSRF token buyrug`i
+
+b) views.py:
+ def main(post_detail funksiyalariga ham tashlash) dan keyin:
+ if request.method=='POST':
+        search=request.POST['qidiruv']
+        posts = Post.objects.filter(malumot__icontains=search)
+        return render(request,'blog/search.html',{"posts":posts})
+
+
+c) blog+search.html ochish:
+
+d) basic.html dagi barcha kodlarni ko`chirish:
+
+
+
+
+
+
+
+
